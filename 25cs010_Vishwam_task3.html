@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Online Product Order</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            background-color: #eeeeee;
+        }
+
+        /* ERROR S1: Missing ':' after text-align.
+           FIX: text-align: center; */
+        #mainTitle {
+            text-align: center;
+            color: darkred;
+        }
+
+        /* ERROR S2: HTML uses id="orderBox", so the CSS selector needs '#'.
+           FIX: #orderBox */
+        #orderBox {
+            width: 450px;
+            border: 2px solid black;
+            margin: 20px auto;
+
+            /* ERROR S3: Length value had no unit.
+               FIX: 20px */
+            padding: 20px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .bill {
+            width: 450px;
+            border: 2px solid green;
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        #orderButton {
+            padding: 10px;
+            background: lightblue;
+        }
+
+    </style>
+
+</head>
+<body>
+<h1 id="mainTitle">Online Product Order</h1>
+
+<div id="orderBox">
+
+    <div class="field">
+
+        <label for="customer">Customer Name:</label>
+
+        <input type="text" id="customer">
+
+    </div>
+
+    <div class="field">
+
+        <label for="product">Select Product:</label>
+
+        <select id="product">
+
+            <option value="">Select Product</option>
+
+            <option value="Laptop">Laptop - Rs. 50000</option>
+
+            <option value="Mobile">Mobile - Rs. 20000</option>
+
+            <option value="Keyboard">Keyboard - Rs. 1500</option>
+
+        </select>
+
+    </div>
+
+    <div class="field">
+
+        <label for="quantity">Quantity:</label>
+
+        <!-- ERROR M2: Quantity was text input.
+             FIX: HTML5 number input with min="1" so zero/negative values are not allowed. -->
+        <input type="number" id="quantity" min="1" step="1">
+
+    </div>
+
+    <!-- ERROR S4: Original onclick called calculate(), but the existing
+         function is calculateBill().
+         FIX: onclick="calculateBill()" -->
+    <button id="orderButton"
+            onclick="calculateBill()">
+
+        Generate Bill
+
+    </button>
+
+</div>
+
+<div id="billBox" class="bill">
+
+    Bill will appear here.
+
+</div>
+
+<script>
+
+function calculateBill() {
+
+    // ERROR S5: Original used getElementByID().
+    // FIX: Correct DOM method is getElementById().
+    var customer =
+        document.getElementById("customer").value.trim();
+
+    // ERROR M1: Original JavaScript used id "products",
+    // but the HTML select has id="product".
+    // FIX: Use "product".
+    var product =
+        document.getElementById("product").value;
+
+    var quantity =
+        document.getElementById("quantity").value;
+
+    // ERROR M5: Original validation checked customer AND quantity together
+    // and did not validate product.
+    // FIX: Validate each required field separately and stop with return.
+    if (customer == "") {
+
+        alert("Enter Customer Name");
+        return;
+
+    }
+
+    if (product == "") {
+
+        alert("Select a Product");
+        return;
+
+    }
+
+    // ERROR D2: Quantity must reject empty input.
+    if (quantity == "") {
+
+        alert("Enter Quantity");
+        return;
+
+    }
+
+    // ERROR D1/D2: Quantity must be numeric and used in multiplication.
+    // FIX: Convert the input to a number.
+    quantity = Number(quantity);
+
+    // ERROR D2: Reject invalid, zero, and negative quantities.
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+
+        alert("Enter a valid quantity greater than 0");
+        return;
+
+    }
+
+    var price = 0;
+
+    if (product == "Laptop") {
+        price = 50000;
+    }
+
+    // ERROR M3: Original calculation used 2000.
+    // FIX: Displayed Mobile price is Rs. 20000.
+    if (product == "Mobile") {
+        price = 20000;
+    }
+
+    if (product == "Keyboard") {
+        price = 1500;
+    }
+
+    // ERROR D1: Original used price + quantity.
+    // FIX: Total Amount = Product Price × Quantity.
+    var total =
+        price * quantity;
+
+    // ERROR D3: Customer Type must be requested using prompt()
+    // and only Regular/Premium may continue.
+    var customerType =
+        prompt("Enter Customer Type: Regular or Premium");
+
+    // ERROR D3: Empty input or Cancel must stop bill generation.
+    if (customerType === null || customerType.trim() == "") {
+
+        alert("Customer Type is required");
+        return;
+
+    }
+    customerType = customerType.trim();
+    // ERROR D3: Reject any value other than Regular or Premium.
+    if (customerType != "Regular" && customerType != "Premium") {
+
+        alert("Customer Type must be Regular or Premium");
+        return;
+
+    }
+
+    // ERROR D4: Original question asked about cancelling.
+    // FIX: Ask whether the user wants to place the order.
+    var order =
+        confirm("Do you want to place this order?");
+
+    // ERROR D4: Cancel must stop bill generation.
+    if (order == false) {
+
+        alert("Order cancelled");
+        return;
+
+    }
+
+    // ERROR M4: Original targeted id="bill", but the actual container
+    // is id="billBox".
+    // FIX: Display the bill inside billBox.
+    document.getElementById("billBox").innerHTML =
+        "<h2>Order Bill</h2>" +
+        "Customer: " + customer +
+        "<br>Product: " + product +
+        "<br>Price: " + price +
+        "<br>Quantity: " + quantity +
+        "<br>Total Amount: " + total +
+        "<br>Customer Type: " + customerType;
+
+    // ERROR D5: Success alert must happen only after the bill is generated.
+    alert("Order placed successfully");
+
+}
+
+</script>
+
+</body>
+</html>
